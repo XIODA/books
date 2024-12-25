@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 use App\Models\Book;
-
+use App\Models\Category;
 
 class BookController extends Controller
 {
@@ -26,16 +27,25 @@ class BookController extends Controller
     //如果搜索參數存在，則進行篩選
     if($request->filled('search')){
         $search = $request->input('search');
-        $query -> where('title','like','%'.$search.'%')
-               -> orWhere('author','like','%'.$search.'%');
+        $query    -> where(function($subQuery) use ($search){
+            $subQuery -> where('title','like','%'.$search.'%')
+                   -> orWhere('author','like','%'.$search.'%');
+
+        });
+    }
+    if($request->filled('category')){
+        $categoryId = $request->input('category');
+        $query->whereHas('categories', function ($subQuery) use ($categoryId) {
+            $subQuery->where('categories.id', $categoryId);
+        });
     }
 
     //分頁顯示
     $books = $query->paginate(6);
     $books->appends($request->all()); //點選分頁時保留搜索的參數
+    $categories = Category::all(); //傳遞所有類別
 
-
-    return view('books.index',compact('books'));
+    return view('books.index',compact('books','categories'));
 
 
     }
@@ -45,7 +55,7 @@ class BookController extends Controller
          $books=Book::all();
          $query = Book::query();
 
-         $books = $query->paginate(2);
+         $books = $query->paginate(6);
          return view('books.backend.index',compact('books'));
 
     }
@@ -55,7 +65,15 @@ class BookController extends Controller
      */
     public function create()
     {
-        return view('books.backend.create');
+        // $categories = Category::all();
+        
+        $categories = Category::all()->map(function ($category) {
+            $category->depth = $category->parent_id ? 1 : 0;
+            return $category;
+        });
+        return view('books.backend.create',compact('categories'));
+
+        
     }
 
    
@@ -66,12 +84,15 @@ class BookController extends Controller
     //處理書籍數據
     public function store(Request $request)
     {
+        
         $valaidated = $request->validate([
             'title'=>'required|string|max:255',
             'author'=>'required|string|max:255',
             'description'=>'nullable|string',
+            'categories'=>'array', //驗證類別數據
             'published_year'=>'required|integer|min:1000|max:9999',
             'img'=>'required|image|mimes:jpeg,png,jpg,gif|max:2048', //圖片驗證
+            'parent_id'=>'nullable|exists:categories,id',
         ]);
 
         if($request->hasfile('img')){
@@ -79,14 +100,18 @@ class BookController extends Controller
         }
 
         // Book::create($valaidated);
-        Book::create([
+        $book = Book::create([
             'title' => $valaidated['title'],
             'author' => $valaidated['author'],
             'published_year' => $valaidated['published_year'],
             'img' => $filePath ?? null,
         ]);
 
-        return redirect('/books/backend')->with('success', '書籍已新增');
+        $book->categories()->sync($request->categories); //保存類別
+        
+        // return redirect('/books/backend')->with('success', '書籍已新增');
+        return redirect()->route('books.backend')->with('success', '書籍已新增');
+
     }
 
     /**
@@ -102,8 +127,12 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-
-        return view('books.backend.edit',compact('book'));
+        // $categories = Category::all();
+        $categories = Category::all()->map(function ($category) {
+            $category->depth = $category->parent_id ? 1 : 0;
+            return $category;
+        });
+        return view('books.backend.edit',compact('book','categories'));
 
     }
 
@@ -116,6 +145,7 @@ class BookController extends Controller
             'title'=>'required|string|max:255',
             'author'=>'required|string|max:255',
             'description'=>'nullable|string',
+            'categories' => 'array',
             'published_year'=>'required|integer|min:1000|max:9999',
             'img'=>'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
@@ -133,6 +163,7 @@ class BookController extends Controller
         }
 
         $book -> update($valaidated);
+        $book -> categories()->sync($request->categories); //更新類別
 
         return redirect('/books/backend')->with('success','書籍已更新');
     }
