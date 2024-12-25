@@ -63,18 +63,30 @@
                     </div>
                     <div class="row gx-5">
                     <form action="{{route('books.index')}}" method="GET">
-                        <input type="text" name="search" id="search" value="{{request('search')}}" placeholder="請輸入名稱">
-                        <button type="submit">搜尋</button>
+                        <input type="text" class="form-control" name="search" id="search" value="{{request('search')}}" placeholder="請輸入名稱">
+                        <select class="form-control" name="category">
+                            <option value="">請選擇</option>
+                            @foreach($categories as $category)
+                            <option value="{{$category->id}}"
+                                @if(request('category') == $category->id) selected @endif
+                            >   
+                                {{ $category->name }}
+                            </option>
+                            @endforeach
+                        </select>
+                        
+                        
+                        <button type="submit" class="btn btn-primary">搜尋</button>
                     </form>
 
                     @foreach($books as $book)
-                        <div class="col-lg-4 mb-5">
+                        <div class="col-lg-4 mb-5" >
                             <div class="card h-100 shadow border-0">
                                 <img class="card-img-top" src="{{ Storage::url($book->img) }}" alt="..." />
                                 <div class="card-body p-4">
                                     <div class="badge bg-primary bg-gradient rounded-pill mb-2">News</div>
-                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><h5 class="card-title mb-3">{{ $book->title }}</h5></a>
-                                    <p class="card-text mb-0">{{ $book->description }}</p>
+                                    <h5 class="card-title mb-3">{{ $book->title }}</h5>
+                                    <!-- <p class="card-text mb-0">{{ $book->description }}</p> -->
                                     
                                 </div>
                                 <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
@@ -85,13 +97,53 @@
                                                 <div class="fw-bold">{{ $book->author }}</div>
                                                 <div class="text-muted">{{ $book->created_at}} &middot; </div>
                                             </div>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 詳細資訊按鈕 -->
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bookModal{{ $book->id }}">
+                                查看詳情
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="bookModal{{ $book->id }}" tabindex="-1" aria-labelledby="bookModalLabel{{ $book->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="bookModalLabel{{ $book->id }}">{{ $book->title }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h6><strong>作者：</strong> {{ $book->author }}</h6>
+                                            <p><strong>出版年份：</strong> {{ $book->published_year }}</p>
+                                            <p><strong>分類：</strong>
+                                                @if ($book->categories->isNotEmpty())
+                                                    {{ $book->categories->pluck('name')->join(', ') }}
+                                                @else
+                                                    無分類
+                                                @endif
+                                            </p>
+                                            <p><strong>簡介：</strong> {{ $book->description }}</p>
+                                            <div>
+                                                @if ($book->img)
+                                                    <img src="{{ asset('storage/' . $book->img) }}" alt="{{ $book->title }}" style="max-width: 100%;">
+                                                @else
+                                                    <p>無圖片</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </div>
                         
                     @endforeach
+                   
 
                     <!-- 分頁寫法 -->
                     <div class="mt-4">
