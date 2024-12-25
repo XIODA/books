@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CategoryController;
 
 
 Route::get('/', function () {
@@ -23,8 +24,7 @@ Route::get('/books', [BookController::class, 'index']);
 
 
 // 後端
-Route::get('/books/backend', [BookController::class, 'backend']);
-
+Route::get('/books/backend', [BookController::class, 'backend'])->name('books.backend');
 
 
 // 顯示創建頁面
@@ -40,3 +40,15 @@ Route::put('/books/backend/{book}', [BookController::class,'update'])->name('boo
 
 // 刪除書籍
 Route::delete('/books/backend/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+
+
+// 類別管理路由
+Route::prefix('books/backend/category')->name('categories.')->group(function () {
+    Route::get('/', [CategoryController::class, 'index'])->name('index'); // 顯示所有類別
+    Route::get('/create', [CategoryController::class, 'create'])->name('create'); // 顯示新增表單
+    Route::post('/', [CategoryController::class, 'store'])->name('store'); // 儲存類別
+    Route::get('/{id}', [CategoryController::class, 'show'])->name('show'); // 顯示單一類別
+    Route::get('/{id}/edit', [CategoryController::class, 'edit'])->name('edit'); // 顯示編輯表單
+    Route::put('/{id}', [CategoryController::class, 'update'])->name('update'); // 更新類別
+    Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy'); // 刪除類別
+});
