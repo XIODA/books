@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(Auth::check())
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container px-5">
             <a class="navbar-brand" href="{{ route('books.index') }}">勖群的書庫</a>
@@ -66,4 +67,7 @@
             {{ $books->links('pagination::bootstrap-5') }}
         </div>
     </div>
+@else
+您沒有權限查看裡面的資料。
+@endif
 @endsection

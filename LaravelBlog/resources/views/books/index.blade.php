@@ -1,5 +1,14 @@
 @extends('layouts.app')
-
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 @section('content')
 <body class="d-flex flex-column h-100">
         <main class="flex-shrink-0">
@@ -13,19 +22,33 @@
                             <li class="nav-item"><a class="nav-link" href="{{asset('books')}}">首頁</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{asset('about')}}">關於我</a></li>
                             <li class="nav-item"><a class="nav-link" href="contact.html">聯絡我們</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Blog</a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
-                                    <li><a class="dropdown-item" href="blog-home.html">Blog Home</a></li>
-                                    <li><a class="dropdown-item" href="blog-post.html">Blog Post</a></li>
-                                </ul>
-                            </li>
+
+                            
+                            @if(Auth::check())
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">作品</a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
                                     <li><a class="dropdown-item" href="portfolio-overview.html">作品總覽</a></li>
                                     <li><a class="dropdown-item" href="portfolio-item.html">作品清單</a></li>
                                 </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                            
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">書庫</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{{ route('books.backend') }}">我的書庫設定</a></li>
+                                    <form action="{{route('logout')}}" method="POST" style="display:inline;">
+                                        @csrf
+
+                                        <button type="submit" class="btn btn-link">登出</button>
+                                    </form>
+                                </ul>
+                            @else
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">登入</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{{ route('login') }}">登入</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('register.form') }}">註冊</a></li>
+                            @endif
                             </li>
                         </ul>
                     </div>

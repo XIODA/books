@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AuthController;
 
 
 Route::get('/', function () {
@@ -20,7 +21,7 @@ Route::get('/content', function () {
 
 // Route::resource('books',BookController::class);
 
-Route::get('/books', [BookController::class, 'index']);
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
 
 // 後端
@@ -52,3 +53,13 @@ Route::prefix('books/backend/category')->name('categories.')->group(function () 
     Route::put('/{id}', [CategoryController::class, 'update'])->name('update'); // 更新類別
     Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('destroy'); // 刪除類別
 });
+
+
+//登入登出路由
+Route:: get('/login', [AuthController::class,'showLoginForm'])->name('login');
+Route:: post('/login',[AuthController::class,'login']);
+Route:: post('/logout',[AuthController::class,'logout'])->name('logout');
+
+//註冊路由
+Route:: get('/register',[AuthController::class,'showRegisterForm'])->name('register.form');
+Route:: post('/register',[AuthController::class, 'register'])->name('register');
