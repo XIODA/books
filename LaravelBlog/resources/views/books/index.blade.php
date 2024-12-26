@@ -15,7 +15,7 @@
             <!-- Navigation-->
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container px-5">
-                    <a class="navbar-brand" href="{{asset('books')}}">勖群的書庫</a>
+                    <a class="navbar-brand" href="{{asset('books')}}">共享區</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -128,6 +128,7 @@
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#bookModal{{ $book->id }}">
                                 查看詳情
                             </button>
+                            
 
                             <!-- Modal -->
                             <div class="modal fade" id="bookModal{{ $book->id }}" tabindex="-1" aria-labelledby="bookModalLabel{{ $book->id }}" aria-hidden="true">
@@ -154,6 +155,13 @@
                                                 @else
                                                     <p>無圖片</p>
                                                 @endif
+                                            </div>
+                                            <div>
+                                            @if ($book->is_public)
+                                                <span class="badge bg-success">公開</span>
+                                            @else
+                                                <span class="badge bg-secondary">隱藏</span>
+                                            @endif    
                                             </div>
                                         </div>
                                         <div class="modal-footer">

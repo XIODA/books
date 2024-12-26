@@ -63,3 +63,7 @@ Route:: post('/logout',[AuthController::class,'logout'])->name('logout');
 //註冊路由
 Route:: get('/register',[AuthController::class,'showRegisterForm'])->name('register.form');
 Route:: post('/register',[AuthController::class, 'register'])->name('register');
+
+
+//開啟或關閉書庫
+Route:: patch('/books/{book}/toggle',[BookController::class,'toggleVisibility'])->name('books.toggle');

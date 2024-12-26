@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use App\Models\Book;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -16,6 +17,7 @@ class BookController extends Controller
     //前台頁面
     public function index(Request $request)
     {
+        
          $books=Book::all();
         
         //  return view('books.index',compact('books'));
@@ -23,6 +25,17 @@ class BookController extends Controller
     //初始化查詢
     $query = Book::query();
     
+    //未登入情況
+    if(!auth()->check()){
+        $query->where('is_public',true);
+    }else{
+        //登入情況
+        
+        $query->where(function($subQuery){
+            $subQuery->where('is_public',true)
+                     ->orWhere('user_id',auth()->id());
+        });
+    }
 
     //如果搜索參數存在，則進行篩選
     if($request->filled('search')){
@@ -54,6 +67,9 @@ class BookController extends Controller
     {
          $books=Book::all();
          $query = Book::query();
+         $query->where(function($subQuery){
+            $subQuery->where('user_id',auth()->id());
+        });
 
          $books = $query->paginate(6);
          return view('books.backend.index',compact('books'));
@@ -84,7 +100,8 @@ class BookController extends Controller
     //處理書籍數據
     public function store(Request $request)
     {
-        
+        // dd(session('user_id'));
+        // dd($request->all());
         $valaidated = $request->validate([
             'title'=>'required|string|max:255',
             'author'=>'required|string|max:255',
@@ -93,18 +110,22 @@ class BookController extends Controller
             'published_year'=>'required|integer|min:1000|max:9999',
             'img'=>'required|image|mimes:jpeg,png,jpg,gif|max:2048', //圖片驗證
             'parent_id'=>'nullable|exists:categories,id',
+            'is_public' => 'nullable',
         ]);
 
         if($request->hasfile('img')){
             $filePath = $request->file('img')->store('images','public'); //儲存在public的images
         }
 
+        
         // Book::create($valaidated);
         $book = Book::create([
             'title' => $valaidated['title'],
             'author' => $valaidated['author'],
             'published_year' => $valaidated['published_year'],
             'img' => $filePath ?? null,
+            'user_id' => session('user_id'),
+            'is_public'=>$valaidated['is_public'], //根據是否勾選公開
         ]);
 
         $book->categories()->sync($request->categories); //保存類別
@@ -141,6 +162,7 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
+        
         $valaidated = $request->validate([
             'title'=>'required|string|max:255',
             'author'=>'required|string|max:255',
@@ -148,8 +170,11 @@ class BookController extends Controller
             'categories' => 'array',
             'published_year'=>'required|integer|min:1000|max:9999',
             'img'=>'nullable|file|mimes:jpg,jpeg,png,gif|max:2048',
+            'is_public'=>'nullable|boolean',
         ]);
         
+        $valaidated['is_public'] = $request->input('is_public', 0);
+
         //處理圖片文件上傳
         if($request->hasfile('img')){
             //刪除舊照片
@@ -175,5 +200,16 @@ class BookController extends Controller
     {
         $book->delete();
         return redirect('/books/backend')->with('success','書籍已刪除');
+    }
+    public function toggleVisibility(Book $book)
+    {
+    if ($book->user_id !== auth()->id()) {
+        abort(403, '您無權修改此書庫');
+    }
+
+    $book->is_public = !$book->is_public;
+    $book->save();
+
+    return redirect()->route('books.index')->with('success', '書庫公開狀態已更新');
     }
 }

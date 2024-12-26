@@ -50,6 +50,17 @@
                 <label for="img" class="form-label">上傳圖片：</label>
                 <input type="file" id="img" name="img" class="form-control">
             </div>
+            
+            <div class="mb-3">
+                <label for="is_public" class="form-label">公開狀態</label>
+                <div class="form-check">
+                <input type="hidden" name="is_public" value="0">
+                <input type="checkbox" id="is_public" name="is_public" value="1" class="form-check-input" 
+                {{ old('is_public', true) ? 'checked' : '' }}>
+                    <label for="is_public" class="form-check-label">公開</label>
+                </div>
+                <small class="form-text text-muted">勾選表示公開，未勾選表示隱藏。</small>
+            </div>
 
             <div class="d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary">新增</button>

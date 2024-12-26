@@ -3,7 +3,7 @@
 @section('content')
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container px-5">
-            <a class="navbar-brand" href="{{ route('books.index') }}">勖群的書庫</a>
+            <a class="navbar-brand" href="{{ route('books.index') }}">{{session('name')}}的書庫</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -64,6 +64,15 @@
                         <img src="{{ asset('storage/' . $book->img) }}" alt="書籍圖片" class="img-thumbnail" style="max-width: 200px;">
                     </div>
                 @endif
+            </div>
+            <div class="mb-3">
+                <label for="is_public" class="form-label">公開狀態</label>
+                <div class="form-check">
+                    <input type="hidden" name="is_public" value="0"> <!-- 預設為 0 -->
+                    <input type="checkbox" id="is_public" name="is_public" value="1" class="form-check-input" 
+                        {{ old('is_public', $book->is_public) ? 'checked' : '' }}>
+                    <label for="is_public" class="form-check-label">公開</label>
+                </div>
             </div>
 
             <button type="submit" class="btn btn-primary">更新書籍</button>
