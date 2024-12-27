@@ -164,6 +164,28 @@
                                             @endif    
                                             </div>
                                         </div>
+                                        @auth
+                                            <form action="{{ route('comments.store', $book->id) }}" method="POST" class="mt-3">
+                                                @csrf
+                                                <div class="mb-3">
+                                                    <textarea name="content" class="form-control" rows="3" placeholder="留下您的留言..." required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">提交留言</button>
+                                            </form>
+                                        @else
+                                            <p class="text-muted">請先 <a href="{{ route('login') }}">登入</a> 才能留言。</p>
+                                        @endauth
+                                        <div class="mt-5">
+                                            <h3>留言板</h3>
+                                            @foreach($book->comments as $comment)
+                                                <div class="card my-2">
+                                                    <div class="card-body">
+                                                        <p>{{ $comment->content }}</p>
+                                                        <small>由 {{ $comment->user->name }} 在 {{ $comment->created_at->timezone('Asia/Taipei')->format('Y-m-d H:i') }} 發表</small>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
                                         </div>

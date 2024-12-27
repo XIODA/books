@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,3 +67,6 @@ Route:: post('/register',[AuthController::class, 'register'])->name('register');
 
 //開啟或關閉書庫
 Route:: patch('/books/{book}/toggle',[BookController::class,'toggleVisibility'])->name('books.toggle');
+
+//留言
+Route:: post('/books/{book}/comments',[CommentController::class,'store'])->name('comments.store');
