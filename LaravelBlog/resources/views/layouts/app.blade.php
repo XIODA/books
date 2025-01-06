@@ -32,5 +32,20 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 </html>
+    
+
+<script> 
+    $(document).ready(function(){
+        //1秒淡出並移除
+        setTimeout(function(){
+            $(".alert").fadeOut(500,function(){
+                $(this).remove(); //完全從DOM移除
+            })
+        },1000) //1秒延遲
+    })
+
+
+</script>

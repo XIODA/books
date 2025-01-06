@@ -13,6 +13,7 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('books.index') }}">首頁</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('books.create') }}">新增書籍</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('categories.index') }}">管理類別</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('backend.comments.index') }}">管理留言</a></li>
                 </ul>
             </div>
         </div>

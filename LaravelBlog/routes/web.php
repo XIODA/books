@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -70,3 +71,9 @@ Route:: patch('/books/{book}/toggle',[BookController::class,'toggleVisibility'])
 
 //留言
 Route:: post('/books/{book}/comments',[CommentController::class,'store'])->name('comments.store');
+
+//後臺留言
+    Route::get('books/backend/comments', [CommentController::class, 'backend'])->name('backend.comments.index');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('backend.comments.destroy');
+    Route::get('books/backend/comments/{comment}/edit', [CommentController::class, 'edit'])->name('backend.comments.edit');
+    Route::put('books/backend/comments/{comment}', [CommentController::class, 'update'])->name('backend.comments.update');
