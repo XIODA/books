@@ -77,3 +77,10 @@ Route:: post('/books/{book}/comments',[CommentController::class,'store'])->name(
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('backend.comments.destroy');
     Route::get('books/backend/comments/{comment}/edit', [CommentController::class, 'edit'])->name('backend.comments.edit');
     Route::put('books/backend/comments/{comment}', [CommentController::class, 'update'])->name('backend.comments.update');
+
+
+//修改使用者資訊
+Route::middleware('auth')->group(function () {
+    Route::get('profile/edit', [AuthController::class, 'editProfile'])->name('profile.edit');
+    Route::put('profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
+});

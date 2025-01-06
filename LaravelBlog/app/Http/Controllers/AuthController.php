@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
 
@@ -67,6 +69,50 @@ class AuthController extends Controller
 
         //跳轉到書庫頁面
         return redirect()->route('books.index'); 
+    }
+
+    public function editProfile()
+    {
+        $user = auth()->user();
+        return view('profile.edit', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|min:8|confirmed',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'birthday' => 'nullable|date',
+            'bio' => 'nullable|string|max:1000',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            // 刪除舊的大頭貼
+            if ($user->avatar) {
+                Storage::delete('public/' . $user->avatar);
+            }
+
+            // 上傳新大頭貼
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']); // 如果密碼未更改，移除這個欄位
+        }
+        
+        $user = Auth::user(); // 取得當前用戶
+        $user->update($validated); // 更新資料庫中的用戶資料
+
+        //刷新用戶資料
+        Auth::user()->name = $validated['name'];
+
+        return redirect()->route('books.index')->with('success', '個人資料已更新！');
     }
     
 }

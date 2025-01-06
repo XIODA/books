@@ -37,6 +37,7 @@
                                 <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">書庫</a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
                                     <li><a class="dropdown-item" href="{{ route('books.backend') }}">我的書庫設定</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}">使用者管理</a></li>
                                     <form action="{{route('logout')}}" method="POST" style="display:inline;">
                                         @csrf
 
