@@ -5,6 +5,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\UserController;
 
 
 Route::get('/', function () {
@@ -84,3 +86,15 @@ Route::middleware('auth')->group(function () {
     Route::get('profile/edit', [AuthController::class, 'editProfile'])->name('profile.edit');
     Route::put('profile/update', [AuthController::class, 'updateProfile'])->name('profile.update');
 });
+
+
+//好友
+Route::middleware('auth')->group(function(){
+    Route::get('/search',[FriendshipController::class,'search'])->name('search');
+    Route::post('/friend-request',[FriendshipController::class,'sendRequest'])->name('friend.request');
+    Route::post('/friend-accept',[FriendshipController::class,'acceptRequest'])->name('friend.accept');
+
+});
+
+//個人頁面
+Route::get('user/{id}',[UserController::class,'show'])->name('user.show');

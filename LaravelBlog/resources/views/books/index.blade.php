@@ -37,7 +37,8 @@
                                 <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">書庫</a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
                                     <li><a class="dropdown-item" href="{{ route('books.backend') }}">我的書庫設定</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}">使用者管理</a></li>
+                                    <li><a class="dropdown-item" href="/user/{{Auth::user()->id}}">{{Auth::user()->name}}</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}">編輯個人資料</a></li>
                                     <form action="{{route('logout')}}" method="POST" style="display:inline;">
                                         @csrf
 
@@ -181,8 +182,8 @@
                                             @foreach($book->comments as $comment)
                                                 <div class="card my-2">
                                                     <div class="card-body">
-                                                        <p>{{ $comment->content }}</p>
-                                                        <small>由 {{ $comment->user->name }} 在 {{ $comment->created_at->timezone('Asia/Taipei')->format('Y-m-d H:i') }} 發表</small>
+                                                        <img src="{{ asset('storage/' . $comment->user->avatar) }}" alt="avatar" width="50" class="mt-2"><p style="color:red;font-weight:900">{{ $comment->user->name }}:</p> <p>{{ $comment->content }}</p>
+                                                        <small>在 {{ $comment->created_at->timezone('Asia/Taipei')->format('Y-m-d H:i') }} 發表</small>
                                                     </div>
                                                 </div>
                                             @endforeach
