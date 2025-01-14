@@ -75,6 +75,18 @@
                 </div>
             </header>
             
+            <section class="py-5">
+                <div class="container px-5 my-5">
+                    <h2 class="fw-bolder">搜尋用戶</h2>
+                    <p class="lead fw-normal text-muted mb-4">找到並新增朋友！</p>
+                    <div class="mb-3">
+                        <input type="text" id="user-search" class="form-control" placeholder="輸入用戶名稱">
+                    </div>
+                    <ul id="user-results" class="list-group">
+                        <!-- 搜尋結果將顯示於此 -->
+                    </ul>
+                </div>
+            </section>
             <!-- Blog preview section-->
             <section class="py-5">
                 <div class="container px-5 my-5">

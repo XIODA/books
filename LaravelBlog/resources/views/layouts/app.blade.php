@@ -48,4 +48,29 @@
     })
 
 
+    //好友搜尋
+    document.getElementById('user-search').addEventListener('input', function () {
+    let query = this.value;
+
+    if (query.length > 0) {
+        fetch(`/search-users?q=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                let resultsList = document.getElementById('user-results');
+                resultsList.innerHTML = '';
+
+                data.forEach(user => {
+                    let listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+                    listItem.innerHTML = `
+                        <a href="/user/${user.id}" style="color:black;text-decoration:none">${user.name}</a>
+                        
+                    `;
+                    resultsList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    }
+});
+
 </script>

@@ -55,4 +55,11 @@ class User extends Authenticatable
     public function comments(){
         return $this -> hasMany(Comment::class);
     }
+
+    //用戶的好友
+    public function friends(){
+        return $this->belongsToMany(User::class, 'friendships','user_id','friend_id')->wherePivot('status','accepted');
+    }
+
+    
 }

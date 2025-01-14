@@ -42,6 +42,35 @@
         </div>
     </div>
 </nav>
+<!-- 顯示收到的好友請求 -->
+@php
+    $receivedRequests = \App\Models\Friendship::where('friend_id', auth()->id())
+                        ->where('status', 'pending')
+                        ->get();
+@endphp
+
+@if($receivedRequests->isNotEmpty())
+    <h4>收到的好友請求</h4>
+    <ul>
+        @foreach($receivedRequests as $request)
+            <li>
+                {{ $request->sender->name }}
+                <!-- 接受好友請求 -->
+                <form action="{{ route('friend.accept') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <input type="hidden" name="friendship_id" value="{{ $request->id }}">
+                    <button type="submit" class="btn btn-success btn-sm">接受</button>
+                </form>
+                <!-- 拒絕好友請求 -->
+                <form action="{{ route('friend.reject') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <input type="hidden" name="friendship_id" value="{{ $request->id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">拒絕</button>
+                </form>
+            </li>
+        @endforeach
+    </ul>
+@endif
 
 <!-- 用戶資訊 -->
 <div class="container my-5">
@@ -54,11 +83,23 @@
             <p><strong>生日：</strong>{{ $user->birthday }}</p>
 
             @if(auth()->id() !== $user->id)
-                <form action="{{ route('friend.request') }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="friend_id" value="{{ $user->id }}">
-                    <button type="submit" class="btn btn-primary">加入好友</button>
-                </form>
+                @php
+                    $friendship = \App\Models\Friendship::where('user_id', auth()->id())
+                                ->where('friend_id', $user->id)
+                                ->first();
+                @endphp
+
+                @if($friendship && $friendship->status === 'pending')
+                    <button class="btn btn-secondary" disabled>好友請求已發送</button>
+                @elseif($friendship && $friendship->status === 'accepted')
+                    <button class="btn btn-success" disabled>已是好友</button>
+                @else
+                    <form action="{{ route('friend.request') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="friend_id" value="{{ $user->id }}">
+                        <button type="submit" class="btn btn-primary">加入好友</button>
+                    </form>
+                @endif
             @endif
         </div>
     </div>
@@ -144,7 +185,7 @@
             <div class="row">
                 @forelse($user->friends as $friend)
                     <div class="col-md-4 text-center mb-3">
-                        <img src="{{ asset('storage/' . $friend->avatar) }}" alt="好友大頭貼" class="img-thumbnail rounded-circle" style="width: 75px; height: 75px;">
+                        <a href="/user/{{$friend->id}}"><img src="{{ asset('storage/' . $friend->avatar) }}" alt="好友大頭貼" class="img-thumbnail rounded-circle" style="width: 75px; height: 75px;"></a>
                         <p class="mt-2 mb-0">{{ $friend->name }}</p>
                         <small class="text-muted">{{ $friend->bio }}</small>
                     </div>

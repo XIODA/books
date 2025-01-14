@@ -93,8 +93,13 @@ Route::middleware('auth')->group(function(){
     Route::get('/search',[FriendshipController::class,'search'])->name('search');
     Route::post('/friend-request',[FriendshipController::class,'sendRequest'])->name('friend.request');
     Route::post('/friend-accept',[FriendshipController::class,'acceptRequest'])->name('friend.accept');
+    Route::post('/friend-decline',[FriendshipController::class,'declineRequest'])->name('friend.decline');
+    Route::post('/friend/reject', [FriendshipController::class, 'rejectRequest'])->name('friend.reject');
 
 });
 
 //個人頁面
 Route::get('user/{id}',[UserController::class,'show'])->name('user.show');
+
+// 搜尋使用者
+Route::get('/search-users', [FriendshipController::class, 'search'])->name('search.users');
