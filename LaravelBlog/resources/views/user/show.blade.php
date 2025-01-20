@@ -42,35 +42,6 @@
         </div>
     </div>
 </nav>
-<!-- 顯示收到的好友請求 -->
-@php
-    $receivedRequests = \App\Models\Friendship::where('friend_id', auth()->id())
-                        ->where('status', 'pending')
-                        ->get();
-@endphp
-
-@if($receivedRequests->isNotEmpty())
-    <h4>收到的好友請求</h4>
-    <ul>
-        @foreach($receivedRequests as $request)
-            <li>
-                {{ $request->sender->name }}
-                <!-- 接受好友請求 -->
-                <form action="{{ route('friend.accept') }}" method="POST" style="display: inline;">
-                    @csrf
-                    <input type="hidden" name="friendship_id" value="{{ $request->id }}">
-                    <button type="submit" class="btn btn-success btn-sm">接受</button>
-                </form>
-                <!-- 拒絕好友請求 -->
-                <form action="{{ route('friend.reject') }}" method="POST" style="display: inline;">
-                    @csrf
-                    <input type="hidden" name="friendship_id" value="{{ $request->id }}">
-                    <button type="submit" class="btn btn-danger btn-sm">拒絕</button>
-                </form>
-            </li>
-        @endforeach
-    </ul>
-@endif
 
 <!-- 用戶資訊 -->
 <div class="container my-5">
@@ -84,16 +55,41 @@
 
             @if(auth()->id() !== $user->id)
                 @php
-                    $friendship = \App\Models\Friendship::where('user_id', auth()->id())
-                                ->where('friend_id', $user->id)
-                                ->first();
+                        // 檢查送出的好友請求
+                        $sendRequest = \App\Models\Friendship::where('user_id', auth()->id())
+                                        ->where('friend_id', $user->id)
+                                        ->first();
+
+                        // 檢查收到的好友請求
+                        $receivedRequest = \App\Models\Friendship::where('user_id', $user->id)
+                                            ->where('friend_id', auth()->id())
+                                            ->first();
                 @endphp
 
-                @if($friendship && $friendship->status === 'pending')
+                @if($sendRequest && $sendRequest->status === 'pending') 
+                    <!--好友邀請發送-->
                     <button class="btn btn-secondary" disabled>好友請求已發送</button>
-                @elseif($friendship && $friendship->status === 'accepted')
-                    <button class="btn btn-success" disabled>已是好友</button>
+                @elseif($receivedRequest && $receivedRequest->status =='pending')
+                    <!--接受好友邀請-->
+                    <form action="{{ route('friend.accept') }}" method="POST"  style="display: inline;">
+                        @csrf
+                        <input type="hidden" name="friendship_id" value="{{$receivedRequest->id}}">
+                        <button type="submit" class="btn btn-success">接受好友邀請</button>
+                    </form>
+                @elseif(($sendRequest && $sendRequest->status === 'accepted') || ($receivedRequest && $receivedRequest->status === 'accepted'))
+                    <!--已是好友-->
+                    <div class="d-inline-block">
+                        <button class="btn btn-success" disabled>已是好友</button>
+                    </div>
+                        <!-- 刪除好友 -->
+                     <form action="{{route('friend.delete')}}" method="POST" class="d-inline-block">
+                        @csrf
+                        <input type="hidden" name="friendship_id"  
+                                value="{{ $sendRequest ? $sendRequest->id : ($receivedRequest ? $receivedRequest->id : '') }}">
+                        <button class="btn btn-danger" >刪除好友</button>
+                     </form>
                 @else
+                    <!--加入好友-->
                     <form action="{{ route('friend.request') }}" method="POST">
                         @csrf
                         <input type="hidden" name="friend_id" value="{{ $user->id }}">
@@ -192,6 +188,50 @@
                 @empty
                     <p class="text-muted">暫無好友</p>
                 @endforelse
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h4>確認邀請</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                
+            <!-- 顯示收到的好友請求 -->
+                @php
+                    $receivedRequests = \App\Models\Friendship::where('friend_id', auth()->id())
+                                        ->where('status', 'pending')
+                                        ->get();
+                @endphp
+                @if(auth()->id() === $user->id)
+
+                    @if($receivedRequests->isNotEmpty())
+                        
+                            @foreach($receivedRequests as $request)
+                            <div class="col-md-4 text-center mb-3">
+                                <a href="/user/{{$request->sender->id}}"><img src="{{ asset('storage/' . $request->sender->avatar) }}" alt="大頭貼" class="img-thumbnail rounded-circle" style="width: 75px; height: 75px;"></a>
+                                <p class="mt-2 mb-0">{{ $request->sender->name }}</p>
+                                    <!-- 接受好友請求 -->
+                                    <form action="{{ route('friend.accept') }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="friendship_id" value="{{ $request->id }}">
+                                        <button type="submit" class="btn btn-success btn-sm">接受</button>
+                                    </form>
+                                    <!-- 拒絕好友請求 -->
+                                    <form action="{{ route('friend.reject') }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        <input type="hidden" name="friendship_id" value="{{ $request->id }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">拒絕</button>
+                                    </form>
+
+                            </div>
+                                   
+                                
+                            @endforeach
+                        
+                    @endif
+                @endif
             </div>
         </div>
     </div>

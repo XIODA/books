@@ -61,5 +61,10 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'friendships','user_id','friend_id')->wherePivot('status','accepted');
     }
 
+    //用戶好友狀態API
+    public function friendStatusApi(){
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->withPivot('status');
+    }
+
     
 }

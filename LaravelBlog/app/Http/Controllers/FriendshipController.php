@@ -80,4 +80,24 @@ class FriendshipController extends Controller
 
         return back()->with('success', '已拒絕好友請求！');
     }
+
+    //刪除好友
+    public function delete(Request $request){
+       
+
+        $friendship = Friendship::find($request->friendship_id);
+
+        if ($friendship) {
+            $friendship->delete();
+
+            // 可選：根據雙向好友邏輯刪除對方的關係
+            Friendship::where('user_id', $friendship->friend_id)
+                    ->where('friend_id', $friendship->user_id)
+                    ->delete();
+
+            return back()->with('success', '好友已刪除');
+        }
+
+        return back()->with('error', '好友關係不存在');
+    }
 }

@@ -1,5 +1,47 @@
 @extends('layouts.app')
 @section('content')
+
+<!-- 頂部導航欄 -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container px-5">
+        <a class="navbar-brand" href="{{ asset('books') }}">
+            
+            共享區
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{ asset('books') }}">首頁</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{{ asset('about') }}">關於我</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ asset('contact') }}">聯絡我們</a></li>
+
+                @if(Auth::check())
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ Auth::user()->name }}</a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/user/{{ Auth::user()->id }}">個人頁面</a></li>
+                        <li><a class="dropdown-item" href="/books/backend">我的書庫</a></li>
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}">編輯個人資料</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                                @csrf
+                                <button type="submit" class="dropdown-item">登出</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                @else
+                <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">登入</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('register.form') }}">註冊</a></li>
+                @endif
+            </ul>
+        </div>
+    </div>
+</nav>
 <div class="container">
     <h1>編輯個人資料</h1>
 
