@@ -71,6 +71,18 @@
             })
             .catch(error => console.error('Error fetching users:', error));
     }
-});
+    });
+
+    //複製連結
+    function copyToClipboard(link) {
+        navigator.clipboard.writeText(link).then(() => {
+            alert('連結已複製到剪貼簿！');
+        });
+    }
+
+    function toggleEmbedCode(bookId) {
+        const embedCodeDiv = document.getElementById(`embed-code-${bookId}`);
+        embedCodeDiv.style.display = embedCodeDiv.style.display === 'none' ? 'block' : 'none';
+    }
 
 </script>

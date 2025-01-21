@@ -201,8 +201,40 @@
                                             @endforeach
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                                        <!-- 分享功能 -->
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <!-- Facebook 分享 -->
+                                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('books.show', $book->id)) }}" 
+                                            target="_blank" class="btn btn-primary btn-sm">
+                                            分享至 Facebook
+                                            </a>
+
+                                            <!-- LINE 分享 -->
+                                            <a href="https://line.me/R/msg/text/?{{ urlencode($book->title . ' ' . route('books.show', $book->id)) }}" 
+                                            target="_blank" class="btn btn-success btn-sm">
+                                            分享至 LINE
+                                            </a>
+
+                                            <!-- 複製連結 -->
+                                            <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('{{ route('books.show', $book->id) }}')">
+                                                複製連結
+                                            </button>
+
+                                            <!-- 嵌入功能 -->
+                                            <button class="btn btn-info btn-sm" onclick="toggleEmbedCode({{ $book->id }})">
+                                                嵌入方式
+                                            </button>
                                         </div>
+
+                                        <!-- 嵌入代碼 -->
+                                        <div id="embed-code-{{ $book->id }}" style="display: none; margin-top: 10px;">
+                                            <textarea class="form-control" readonly rows="3">
+                                        <iframe src="{{ route('books.embed', $book->id) }}" width="600" height="400" frameborder="0"></iframe>
+                                            </textarea>
+                                        </div>
+
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

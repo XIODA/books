@@ -138,9 +138,15 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show( $id)
     {
-        //
+        $book = Book::with(['comments', 'categories'])->findOrFail($id);
+        return view('books.show', compact('book'));
+    }
+    public function embed($id)
+    {
+        $book = Book::findOrFail($id);
+        return view('books.embed', compact('book'));
     }
 
     /**

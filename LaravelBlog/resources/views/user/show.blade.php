@@ -209,7 +209,7 @@
                     @if($receivedRequests->isNotEmpty())
                         
                             @foreach($receivedRequests as $request)
-                            <div class="col-md-4 text-center mb-3">
+                            <div class="col-md-4 text-center mb-3" style="padding-bottom:30px">
                                 <a href="/user/{{$request->sender->id}}"><img src="{{ asset('storage/' . $request->sender->avatar) }}" alt="大頭貼" class="img-thumbnail rounded-circle" style="width: 75px; height: 75px;"></a>
                                 <p class="mt-2 mb-0">{{ $request->sender->name }}</p>
                                     <!-- 接受好友請求 -->

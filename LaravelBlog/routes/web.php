@@ -25,7 +25,8 @@ Route::get('/content', function () {
 // Route::resource('books',BookController::class);
 
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
-
+Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
+Route::get('/books/embed/{id}', [BookController::class, 'embed'])->name('books.embed');
 
 // 後端
 Route::get('/books/backend', [BookController::class, 'backend'])->name('books.backend');
